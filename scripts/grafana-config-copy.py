@@ -30,6 +30,7 @@ src = dict(
     dashboards={"node": 'node.json',
                 "pd"  : 'pd.json',
                 "tidb": 'tidb.json',
+                "tidb_summary": 'tidb_summary.json',
                 "tikv_summary": 'tikv_summary.json',
                 "tikv_details": 'tikv_details.json',
                 "tikv_trouble_shot": 'tikv_trouble_shooting.json',
@@ -88,7 +89,6 @@ def fill_dashboard_with_dest_config(dashboard, dest, type_='node'):
                 link['targetBlank'] = True
                 link['tooltip'] = "Open a pdf report for the current dashboard"
                 link['type'] = "link"
-                link['url'] = "{0}api/report/{1}?apitoken={2}".format(dest['report_url'], dest['titles'][type_].lower(), dest['apikey'])
 
     return dashboard
 
