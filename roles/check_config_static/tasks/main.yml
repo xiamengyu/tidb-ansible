@@ -1,9 +1,9 @@
 ---
 # Common Tasks
 
-- name: Ensure only one monitoring host exists
-  fail: msg="One monitoring host should be specified."
-  when: groups['monitoring_servers'] | length != 1
+- name: Ensure monitoring_servers exists
+  fail: msg="monitoring_servers should be specified."
+  when: groups['monitoring_servers'] | length < 1
 
 - name: Ensure monitored_servers exists
   fail: msg="monitored_servers should be specified."
@@ -33,7 +33,7 @@
   when: (timezone is undefined) or (timezone is defined and timezone == "")
 
 - name: Close old SSH control master processes
-  raw: pkill -f "ssh.*ansible.*"
+  shell: pkill -f "ssh.*ansible.*"
   ignore_errors: true
   changed_when: false
   failed_when: false
@@ -76,3 +76,12 @@
   fail:
     msg: "Jmespath({{ jmespath_version }}) or jinja2({{ jinja2_version }}) version is too low, Please run `pip install --upgrade -r requirements.txt` to upgrade."
   when: jmespath_version | version_compare('0.9.0', '<') or jinja2_version | version_compare('2.9.6', '<')
+
+- name: Check inventory configuration
+  shell: python2 {{ playbook_dir }}/scripts/inventory_check.py {{ ansible_inventory_sources.0 }}
+  register: inventory_check_result
+
+- name: Preflight check - If the inventory configuration is correct
+  fail:
+    msg: "{{ inventory_check_result.stdout }}"
+  when: "'Check ok' not in inventory_check_result.stdout"

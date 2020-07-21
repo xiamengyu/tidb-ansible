@@ -1,7 +1,7 @@
 ---
 
 - name: Disk space check - Fail task when disk is full
-  raw: df -h . | tail -n1
+  shell: df -h . | tail -n1
   register: disk_space_st
   failed_when: " '100%' in disk_space_st.stdout "
   changed_when: false
@@ -39,7 +39,7 @@
 
 - name: Preflight check - NTP service
   fail:
-    msg: "Make sure NTP service is running and ntpstat is synchronised to NTP server. See https://github.com/pingcap/docs/blob/master/dev/how-to/deploy/orchestrated/ansible.md#how-to-check-whether-the-ntp-service-is-normal ."
+    msg: "Make sure NTP service is running and ntpstat is synchronised to NTP server. See https://github.com/pingcap/docs/blob/master/online-deployment-using-ansible.md#how-to-check-whether-the-ntp-service-is-normal."
   when:
     - enable_ntpd
     - ntp_st.stdout|int != 1

@@ -5,26 +5,10 @@ global:
   # lease: 3
   # tso-save-interval: "3s"
 
-  # namespace-classifier: "table"
-
-  # enable-prevote: true
-
 security:
-  # Path of file that contains list of trusted SSL CAs. if set, following four settings shouldn't be empty
-  # cacert-path: ""
-  # Path of file that contains X509 certificate in PEM format.
-  # cert-path: ""
-  # Path of file that contains X509 key in PEM format.
-  # key-path: ""
 
 log:
   #level: "info"
-
-  # log format, one of json, text, console
-  # format: "text"
-
-  # disable automatic timestamps in output
-  # disable-timestamp: false
 
   # file logging
   file:
@@ -38,7 +22,7 @@ log:
     # log-rotate: true
 
 metric:
-
+    
 schedule:
   # max-merge-region-size: 20
   # max-merge-region-keys: 200000
@@ -60,3 +44,21 @@ replication:
   # For example, ["zone", "rack"] means that we should place replicas to
   # different zones first, then to different racks if we don't have enough zones.
   # location-labels: []
+
+dashboard:
+  ## Configurations below are for the TiDB Dashboard embedded in the PD.
+  ## The path of the CA certificate used to verify the TiDB server in TLS.
+  # tidb-cacert-path: ""
+  ## The path of the certificate used to connect to TiDB server in TLS.
+  # tidb-cert-path: ""
+  ## The path of the certificate private key.
+  # tidb-key-path: ""
+  ## The public path prefix to serve Dashboard urls. It can be set when Dashboard
+  ## is running behind a reverse proxy. Do not configure it if you access
+  ## Dashboard directly.
+  # public-path-prefix: "/dashboard"
+  ## When enabled, request will be proxied to the instance running Dashboard
+  ## internally instead of result in a 307 redirection.
+  # internal-proxy: false
+  ## When enabled, usage data will be sent to PingCAP for improving user experience.
+  # enable-telemetry: true

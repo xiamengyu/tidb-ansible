@@ -56,8 +56,20 @@
 {% endfor %}
 
 [tikv-client]
-{% for item, value in tidb_conf.tikv_client | dictsort -%}
+{% for item, value in tidb_conf.tikv_client | dictsort_by_value_type -%}
+{% if value is not mapping -%}
 {{ item }} = {{ value | to_json }}
+{% else %}
+
+{% if item == 'copr_cache' %}
+[tikv-client.copr-cache]
+{% else %}
+[tikv-client.{{ item }}]
+{% endif %}
+{% for sub_item, sub_value in value | dictsort -%}
+{{ sub_item }} = {{ sub_value | to_json }}
+{% endfor %}
+{% endif %}
 {% endfor %}
 
 [txn-local-latches]
@@ -72,5 +84,10 @@
 
 [pessimistic-txn]
 {% for item, value in tidb_conf.pessimistic_txn | dictsort -%}
+{{ item }} = {{ value | to_json }}
+{% endfor %}
+
+[experimental]
+{% for item, value in tidb_conf.experimental | dictsort -%}
 {{ item }} = {{ value | to_json }}
 {% endfor %}

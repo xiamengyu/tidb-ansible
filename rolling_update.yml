@@ -51,8 +51,29 @@
       fail:
         msg: "Rolling update from {{ current_version.stdout_lines[0].replace(' ','').split(':')[1] }} to {{ tidb_version }} is forbidden"
       when:
-        - current_version.stdout_lines[0].replace(' ','').split(':')[1] < "v2.0.1"
-        - tidb_version >= "v2.1.0" or tidb_version == "latest"
+        - current_version.stdout_lines[0].replace(' ','').split(':')[1].strip('v') < "2.0.1"
+        - tidb_version == "latest" or tidb_version >= "v2.1.0"
+
+- name: Pre-check PD configuration
+  hosts: pd_servers[0]
+  tags:
+    - pd
+  roles:
+    - check_config_pd
+
+- name: Pre-check TiKV configuration
+  hosts: tikv_servers[0]
+  tags:
+    - tikv
+  roles:
+    - check_config_tikv
+
+- name: Pre-check TiDB configuration
+  hosts: tidb_servers[0]
+  tags:
+    - tidb
+  roles:
+    - check_config_tidb
 
 - hosts: pd_servers[0]
   any_errors_fatal: true
@@ -310,6 +331,22 @@
     - tikv
 
   post_tasks:
+    - name: Check if tikv_port already in use
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ tikv_port }}"
+        state: stopped
+        timeout: 3
+        msg: "{{ tikv_port }} already in use"
+
+    - name: Check if tikv_status_port already in use
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ tikv_status_port }}"
+        state: stopped
+        timeout: 3
+        msg: "{{ tikv_status_port }} already in use"
+
     - name: start TiKV by supervise
       shell: cd {{ deploy_dir }}/scripts && ./start_tikv.sh
       when: process_supervision == 'supervise'
@@ -450,6 +487,21 @@
     - { role: tidb }
 
   post_tasks:
+    - name: Check if tidb_port already in use
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ tidb_port }}"
+        state: stopped
+        timeout: 3
+        msg: "{{ tidb_port }} already in use"
+
+    - name: Check if tidb_status_port already in use
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ tidb_status_port }}"
+        state: stopped
+        timeout: 3
+        msg: "{{ tidb_status_port }} already in use"
 
     - name: start TiDB by supervise
       shell: cd {{ deploy_dir }}/scripts && ./start_tidb.sh
@@ -489,3 +541,65 @@
       retries: 10
       delay: 5
       when: enable_tls|default(false)
+
+- name: rolling update TiFlash cluster
+  hosts: tiflash_servers
+  any_errors_fatal: true
+  serial: 1
+  tags:
+    - tiflash
+
+  pre_tasks:
+    - name: stop TiFlash by supervise
+      shell: cd {{ deploy_dir }}/scripts && ./stop_tiflash.sh
+      when: process_supervision == 'supervise' and cpu_architecture == 'amd64'
+
+    - name: stop TiFlash by systemd
+      systemd: name=tiflash-{{ tcp_port }}.service state=stopped
+      become: true
+      when: process_supervision == 'systemd' and cpu_architecture == 'amd64'
+
+    - name: wait until the TiFlash port is down
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ http_port }}"
+        state: stopped
+        msg: "the TiFlash port {{ http_port }} is not down"
+      when: cpu_architecture == 'amd64'
+
+  roles:
+    - { role: tiflash, when: cpu_architecture == 'amd64' }
+
+  post_tasks:
+    - name: start TiFlash by supervise
+      shell: cd {{ deploy_dir }}/scripts && ./start_tiflash.sh
+      when: process_supervision == 'supervise' and cpu_architecture == 'amd64'
+
+    - name: start TiFlash by systemd
+      systemd: name=tiflash-{{ tcp_port }}.service state=started
+      become: true
+      when: process_supervision == 'systemd' and cpu_architecture == 'amd64'
+
+    - name: wait until the TiFlash port is up
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ http_port }}"
+        state: started
+        msg: "the TiFlash port {{ http_port }} is not up"
+      when: cpu_architecture == 'amd64'
+
+    - name: wait until the TiFlash status page is available
+      uri:
+        url: "http://{{ ansible_host }}:{{ http_port }}/?query=select%20version()"
+        return_content: yes
+      register: tiflash_http_result
+      until: tiflash_http_result.status == 200
+      retries: 12
+      delay: 5
+      when: not enable_tls|default(false) and cpu_architecture == 'amd64'
+
+- hosts: localhost
+  tags:
+    - always
+  roles:
+    - { role: dashboard_topo }

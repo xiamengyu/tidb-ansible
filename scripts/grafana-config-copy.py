@@ -3,6 +3,7 @@
 from __future__ import print_function, \
     unicode_literals
 
+import sys
 import urllib
 import urllib2
 import base64
@@ -23,7 +24,7 @@ dests = [
 ]
 
 if not dests:
-    with open("./dests.json") as fp:
+    with open(sys.argv[1]) as fp:
         dests = json.load(fp)
 
 src = dict(
@@ -34,12 +35,18 @@ src = dict(
                 "tikv_summary": 'tikv_summary.json',
                 "tikv_details": 'tikv_details.json',
                 "tikv_trouble_shot": 'tikv_trouble_shooting.json',
+                "tiflash_summary": 'tiflash_summary.json',
+                "tiflash_proxy_summary": 'tiflash_proxy_summary.json',
+                "tiflash_proxy_details": 'tiflash_proxy_details.json',
                 "binlog": "binlog.json",
                 "overview": 'overview.json',
                 "disk_performance": 'disk_performance.json',
                 "blackbox_exporter": 'blackbox_exporter.json',
                 "kafka_overview": 'kafka.json',
-                "lightning": 'lightning.json'})
+                "lightning": 'lightning.json',
+                "br": "br.json",
+                "performance_read": 'performance_read.json',
+                "performance_write": 'performance_write.json'})
 
 ############################################################
 ################## CONFIGURATION ENDS ######################

@@ -81,6 +81,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "It indicates whether the current PD is the leader or a follower.",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -137,7 +138,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "count(delta(pd_tso_events{type=\"save\",instance=\"$instance\"}[1m]))",
+              "expr": "delta(pd_tso_events{type=\"save\",instance=\"$instance\"}[1m]) > bool 0",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "",
@@ -175,6 +176,7 @@
           ],
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": null,
+          "description": "The total capacity size of the cluster",
           "editable": true,
           "error": false,
           "format": "decbytes",
@@ -228,7 +230,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\",namespace=~\"$namespace\",type=\"storage_capacity\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\",type=\"storage_capacity\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -259,6 +261,7 @@
           ],
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": 1,
+          "description": "The current storage size of the cluster",
           "editable": true,
           "error": false,
           "format": "decbytes",
@@ -313,7 +316,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\",namespace=~\"$namespace\",type=\"storage_size\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\",type=\"storage_size\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -343,6 +346,7 @@
             "rgba(245, 54, 54, 0.9)"
           ],
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The current storage size and used ratio of the cluster",
           "editable": true,
           "error": false,
           "format": "percentunit",
@@ -397,7 +401,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\",namespace=~\"$namespace\",type=\"storage_size\"}) / sum(pd_cluster_status{instance=\"$instance\",namespace=~\"$namespace\",type=\"storage_capacity\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\",type=\"storage_size\"}) / sum(pd_cluster_status{instance=\"$instance\",type=\"storage_capacity\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -427,6 +431,7 @@
             "#299c46"
           ],
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The count of healthy stores",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -478,7 +483,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"store_up_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\",  type=\"store_up_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A"
@@ -507,6 +512,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The total number of Regions without replicas",
           "editable": true,
           "error": false,
           "format": "none",
@@ -560,7 +566,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\",namespace=~\"$namespace\",type=\"leader_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\",type=\"leader_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -633,7 +639,7 @@
               "expr": "pd_config_status",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{type}}-{{namespace}}",
+              "legendFormat": "{{type}}",
               "refId": "A"
             }
           ],
@@ -709,7 +715,7 @@
               "expr": "pd_regions_label_level{instance=\"$instance\"}",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "label_{{type}}",
+              "legendFormat": "{{type}}",
               "refId": "A"
             }
           ],
@@ -856,7 +862,7 @@
           ],
           "targets": [
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\", namespace=~\"$namespace\",type=\"store_disconnected_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\", type=\"store_disconnected_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Disconnect Stores",
@@ -864,7 +870,7 @@
               "step": 20
             },
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\", namespace=~\"$namespace\",type=\"store_unhealth_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\", type=\"store_unhealth_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Unhealth Stores",
@@ -872,7 +878,7 @@
               "step": 20
             },
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\", namespace=~\"$namespace\",type=\"store_low_space_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\", type=\"store_low_space_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "LowSpace Stores",
@@ -880,7 +886,7 @@
               "step": 20
             },
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\", namespace=~\"$namespace\",type=\"store_down_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\", type=\"store_down_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Down Stores",
@@ -888,7 +894,7 @@
               "step": 20
             },
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\", namespace=~\"$namespace\",type=\"store_offline_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\", type=\"store_offline_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Offline Stores",
@@ -896,7 +902,7 @@
               "step": 20
             },
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\", namespace=~\"$namespace\",type=\"store_tombstone_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\", type=\"store_tombstone_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Tombstone Stores",
@@ -988,6 +994,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": null,
+          "description": "The current peer count of the cluster",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -1022,7 +1029,7 @@
           "steppedLine": true,
           "targets": [
             {
-              "expr": "sum(pd_cluster_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"region_count\"})",
+              "expr": "sum(pd_cluster_status{instance=\"$instance\",  type=\"region_count\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "count",
@@ -1112,6 +1119,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "It records the unusual Regions' count which may include pending peers, down peers, extra peers, offline peers, missing peers or learner peers",
           "fill": 1,
           "gridPos": {
             "h": 7,
@@ -1230,6 +1238,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The number of different operators that are newly created",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -1320,6 +1329,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The number of different operators that have been checked. It mainly checks if the current step is finished; if yes, it returns the next step to be executed.",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -1410,6 +1420,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The number of different operators that are finished",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -1590,6 +1601,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The number of different operators that are replaced or canceled",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -1625,7 +1637,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_schedule_operators_count{instance=\"$instance\", event=\"canceled\"}[1m])) by (type)",
+              "expr": "sum(delta(pd_schedule_operators_count{instance=\"$instance\", event=\"cancel\"}[1m])) by (type)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{type}}",
@@ -1633,7 +1645,7 @@
               "step": 4
             },
             {
-              "expr": "sum(delta(pd_schedule_operators_count{instance=\"$instance\", event=\"replaced\"}[1m])) by (type)",
+              "expr": "sum(delta(pd_schedule_operators_count{instance=\"$instance\", event=\"replace\"}[1m])) by (type)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{type}}",
@@ -1688,6 +1700,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The number of operators in different status",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -1780,6 +1793,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The time consumed when the operator is finished in .99",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -1870,6 +1884,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The time consumed when the operator is finished in .50",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -1960,6 +1975,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The time consumed when the operator step is finished in .99",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -2050,6 +2066,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The time consumed when the operator step is finished in .50",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -2154,6 +2171,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The capacity size of each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -2192,7 +2210,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"store_capacity\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"store_capacity\"}",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2248,6 +2266,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The available capacity size of each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -2283,7 +2302,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "{instance=\"$instance\", namespace=~\"$namespace\", type=\"store_available\"}",
+              "expr": "{store=~\"$store\", instance=\"$instance\",  type=\"store_available\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -2337,6 +2356,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The used capacity size of each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -2373,7 +2393,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"store_used\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"store_used\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -2427,6 +2447,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "It is equal to Store available capacity size over Store capacity size for each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -2462,7 +2483,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"store_available\"}) by (address, store) / sum(pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"store_capacity\"}) by (address, store)",
+              "expr": "sum(pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"store_available\"}) by (address, store) / sum(pd_scheduler_store_status{instance=\"$instance\",  type=\"store_capacity\"}) by (address, store)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -2516,6 +2537,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The size amplification, which is equal to Store Region size over Store used capacity size, of each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -2551,7 +2573,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"region_size\"}) by (address, store) / sum(pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"store_used\"}) by (address, store) * 2^20",
+              "expr": "sum(pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"region_size\"}) by (address, store) / sum(pd_scheduler_store_status{instance=\"$instance\",  type=\"store_used\"}) by (address, store) * 2^20",
               "format": "time_series",
               "instant": false,
               "intervalFactor": 2,
@@ -2607,6 +2629,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": null,
+          "description": "The Region score of each TiKV instance",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -2647,13 +2670,29 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"region_score\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"region_score\"}",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
               "refId": "A",
               "step": 4
+            },
+            {
+              "expr": "pd_scheduler_op_influence{instance=\"$instance\",scheduler=\"balance-region-scheduler\"}",
+              "format": "time_series",
+              "hide": true,
+              "intervalFactor": 1,
+              "legendFormat": "op-influence-{{store}}-{{type}}",
+              "refId": "C"
+            },
+            {
+              "expr": "pd_scheduler_tolerant_resource{instance=\"$instance\",scheduler=\"balance-region-scheduler\"}",
+              "format": "time_series",
+              "hide": true,
+              "intervalFactor": 1,
+              "legendFormat": "tolerant-resource-{{source}}-{{target}}",
+              "refId": "E"
             }
           ],
           "thresholds": [
@@ -2713,6 +2752,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": null,
+          "description": "The leader score of each TiKV instance",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -2753,7 +2793,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"leader_score\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"leader_score\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -2817,6 +2857,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The total Region size of each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -2854,7 +2895,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"region_size\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"region_size\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -2909,6 +2950,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": " \tThe total leader size of each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -2946,7 +2988,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"leader_size\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"leader_size\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3001,6 +3043,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The Region count of each TiKV instance \t",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -3038,7 +3081,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"region_count\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"region_count\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3093,6 +3136,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The leader count of each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 6,
@@ -3129,7 +3173,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{instance=\"$instance\", namespace=~\"$namespace\", type=\"leader_count\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", instance=\"$instance\",  type=\"leader_count\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3200,6 +3244,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": 0,
+          "description": "The total number of leader Regions under hot write on each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -3237,7 +3282,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_hotspot_status{instance=\"$instance\",type=\"hot_write_region_as_leader\"}",
+              "expr": "pd_hotspot_status{store=~\"$store\", instance=\"$instance\", type=\"hot_write_region_as_leader\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3247,6 +3292,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Hot write Region's leader distribution",
           "tooltip": {
@@ -3288,6 +3334,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": 0,
+          "description": "The total number of Regions which are not leader under hot write on each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -3325,7 +3372,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_hotspot_status{instance=\"$instance\",type=\"hot_write_region_as_peer\"}",
+              "expr": "pd_hotspot_status{store=~\"$store\", instance=\"$instance\", type=\"hot_write_region_as_peer\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3335,6 +3382,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Hot write Region's peer distribution",
           "tooltip": {
@@ -3376,6 +3424,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": null,
+          "description": "The total bytes of hot write on leader Regions for each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -3413,7 +3462,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_hotspot_status{instance=\"$instance\",type=\"total_written_bytes_as_leader\"}",
+              "expr": "pd_hotspot_status{store=~\"$store\", instance=\"$instance\", type=\"total_written_bytes_as_leader\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3424,6 +3473,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Hot write Region's leader written bytes",
           "tooltip": {
@@ -3465,6 +3515,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": null,
+          "description": "The total bytes of hot write on Regions which are not leader for each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -3502,7 +3553,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_hotspot_status{instance=\"$instance\",type=\"total_written_bytes_as_peer\"}",
+              "expr": "pd_hotspot_status{store=~\"$store\", instance=\"$instance\", type=\"total_written_bytes_as_peer\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3512,6 +3563,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Hot Region's peer written bytes",
           "tooltip": {
@@ -3553,6 +3605,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": 0,
+          "description": "The total number of leader Regions under hot read on each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -3590,7 +3643,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_hotspot_status{instance=\"$instance\",type=\"hot_read_region_as_leader\"}",
+              "expr": "pd_hotspot_status{store=~\"$store\", instance=\"$instance\", type=\"hot_read_region_as_leader\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3600,6 +3653,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Hot read Region's leader distribution",
           "tooltip": {
@@ -3640,6 +3694,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The total bytes of hot read on leader Regions for each TiKV instance",
           "fill": 0,
           "gridPos": {
             "h": 7,
@@ -3677,7 +3732,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_hotspot_status{instance=\"$instance\",type=\"total_read_bytes_as_leader\"}",
+              "expr": "pd_hotspot_status{store=~\"$store\", instance=\"$instance\", type=\"total_read_bytes_as_leader\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3688,6 +3743,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Hot read Region's leader read bytes",
           "tooltip": {
@@ -3766,7 +3822,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{type=\"store_write_rate_bytes\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", type=\"store_write_rate_bytes\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3776,6 +3832,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Store write rate bytes",
           "tooltip": {
@@ -3855,7 +3912,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{type=\"store_read_rate_bytes\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", type=\"store_read_rate_bytes\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3865,6 +3922,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Store read rate bytes",
           "tooltip": {
@@ -3943,7 +4001,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{type=\"store_write_rate_keys\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", type=\"store_write_rate_keys\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -3953,6 +4011,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Store write rate keys",
           "tooltip": {
@@ -4032,7 +4091,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_scheduler_store_status{type=\"store_read_rate_keys\"}",
+              "expr": "pd_scheduler_store_status{store=~\"$store\", type=\"store_read_rate_keys\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{address}}-store-{{store}}",
@@ -4042,6 +4101,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Store read rate keys",
           "tooltip": {
@@ -4098,6 +4158,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The current running schedulers",
           "fill": 0,
           "gridPos": {
             "h": 8,
@@ -4144,6 +4205,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Scheduler is running",
           "tooltip": {
@@ -4184,6 +4246,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The leader movement details among TiKV instances",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -4221,14 +4284,14 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "- sum(delta(pd_scheduler_balance_leader{address=~\".*out\",instance=\"$instance\", type=\"move_leader\"}[30s])) by (address, store)",
+              "expr": "- sum(delta(pd_scheduler_balance_leader{store=~\"$store\", address=~\".*out\",instance=\"$instance\", type=\"move-leader\"}[30s])) by (address, store)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "store-{{store}}",
               "refId": "A"
             },
             {
-              "expr": "sum(delta(pd_scheduler_balance_leader{address=~\".*in\",instance=\"$instance\", type=\"move_leader\"}[30s])) by (address, store)",
+              "expr": "sum(delta(pd_scheduler_balance_leader{store=~\"$store\", address=~\".*in\",instance=\"$instance\", type=\"move-leader\"}[30s])) by (address, store)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "store-{{store}}",
@@ -4237,6 +4300,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Balance leader movement",
           "tooltip": {
@@ -4277,6 +4341,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The Region movement details among TiKV instances",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -4315,14 +4380,14 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "-sum(delta(pd_scheduler_balance_region{address=~\".*out\",instance=\"$instance\", type=\"move_peer\"}[1m])) by (address, store)",
+              "expr": "-sum(delta(pd_scheduler_balance_region{store=~\"$store\", address=~\".*out\",instance=\"$instance\", type=\"move-peer\"}[1m])) by (address, store)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "store-{{store}}",
               "refId": "A"
             },
             {
-              "expr": "sum(delta(pd_scheduler_balance_region{address=~\".*in\",instance=\"$instance\", type=\"move_peer\"}[1m])) by (address, store)",
+              "expr": "sum(delta(pd_scheduler_balance_region{store=~\"$store\", address=~\".*in\",instance=\"$instance\", type=\"move-peer\"}[1m])) by (address, store)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "store-{{store}}",
@@ -4331,6 +4396,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Balance Region movement",
           "tooltip": {
@@ -4371,6 +4437,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The count of balance leader events",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -4406,15 +4473,16 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_scheduler_balance_leader{instance=\"$instance\", type!=\"move_leader\"}[30s])) by (type, address, store)",
+              "expr": "sum(delta(pd_scheduler_balance_leader{store=~\"$store\", instance=\"$instance\", type!=\"move-leader\"}[30s])) by (type, address, store)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{type}}_store-{{store}}",
+              "legendFormat": "{{type}}-store-{{store}}",
               "refId": "A"
             }
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Balance leader event",
           "tooltip": {
@@ -4455,6 +4523,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The count of balance Region events",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -4491,15 +4560,16 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_scheduler_balance_region{instance=\"$instance\", type!=\"move_peer\"}[30s])) by (type, address, store)",
+              "expr": "sum(delta(pd_scheduler_balance_region{store=~\"$store\", instance=\"$instance\", type!=\"move-peer\"}[30s])) by (type, address, store)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{type}}_store-{{store}}",
+              "legendFormat": "{{type}}-store-{{store}}",
               "refId": "A"
             }
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Balance Region event",
           "tooltip": {
@@ -4540,6 +4610,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The inner status of balance leader scheduler",
           "fill": 0,
           "gridPos": {
             "h": 8,
@@ -4588,6 +4659,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Balance leader scheduler",
           "tooltip": {
@@ -4628,6 +4700,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The inner status of balance Region scheduler",
           "fill": 0,
           "gridPos": {
             "h": 8,
@@ -4676,6 +4749,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Balance Region scheduler",
           "tooltip": {
@@ -4716,94 +4790,12 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The replica checker's status",
           "fill": 0,
           "gridPos": {
             "h": 8,
-            "w": 8,
+            "w": 12,
             "x": 0,
-            "y": 144
-          },
-          "id": 69,
-          "legend": {
-            "alignAsTable": true,
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "rightSide": true,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(delta(pd_checker_event_count{instance=\"$instance\", type=\"namespace_checker\"}[1m])) by (name)",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "{{name}}",
-              "refId": "A",
-              "step": 10
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Namespace checker",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "${DS_TEST-CLUSTER}",
-          "fill": 0,
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
             "y": 144
           },
           "id": 70,
@@ -4882,11 +4874,12 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The merge checker's status",
           "fill": 0,
           "gridPos": {
             "h": 8,
-            "w": 8,
-            "x": 16,
+            "w": 12,
+            "x": 12,
             "y": 144
           },
           "id": 71,
@@ -5002,10 +4995,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_schedule_filter{action=\"filter-target\"}[1m])) by (store,type)",
+              "expr": "sum(delta(pd_schedule_filter{store=~\"$store\", action=\"filter-target\"}[1m])) by (store, type, scope)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{store}}-{{type}}",
+              "legendFormat": "{{scope}}-store-{{store}}-{{type}}",
               "metric": "pd_scheduler_event_count",
               "refId": "A",
               "step": 4
@@ -5090,10 +5083,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_schedule_filter{action=\"filter-source\"}[1m])) by (store,type)",
+              "expr": "sum(delta(pd_schedule_filter{store=~\"$store\", action=\"filter-source\"}[1m])) by (store, type, scope)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{store}}-{{type}}",
+              "legendFormat": "{{scope}}-store-{{store}}-{{type}}",
               "metric": "pd_scheduler_event_count",
               "refId": "A",
               "step": 4
@@ -5178,10 +5171,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_scheduler_balance_region{instance=\"$instance\", type=\"direction\"}[1m])) by (store)",
+              "expr": "sum(delta(pd_scheduler_balance_direction{instance=\"$instance\"}[1m])) by (type, source, target)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{store}}",
+              "legendFormat": "{{source}}-{{target}}-{{type}}",
               "metric": "pd_scheduler_event_count",
               "refId": "A",
               "step": 4
@@ -5266,7 +5259,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pd_schedule_store_limit{type=\"available\"}",
+              "expr": "pd_schedule_store_limit{store=~\"$store\", type=\"available\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{store}}-avaliable",
@@ -5275,7 +5268,7 @@
               "step": 4
             },
             {
-              "expr": "pd_schedule_store_limit{type=\"take\"}",
+              "expr": "pd_schedule_store_limit{store=~\"$store\", type=\"take\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{store}}-take",
@@ -5340,6 +5333,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": null,
+          "description": "The rate of completing each kind of gRPC commands",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -5434,6 +5428,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The time consumed of completing each kind of gRPC commands in .99",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -5544,6 +5539,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The rate of handling etcd transactions",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -5591,7 +5587,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Handle transactions count",
+          "title": "Handle transactions rate",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -5631,6 +5627,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The time consumed of handling etcd transactions in .99",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -5718,6 +5715,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The time consumed of writing WAL into the persistent storage in .99",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -5809,6 +5807,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The latency of the network in .99",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -5875,12 +5874,12 @@
           },
           "yaxes": [
             {
+              "alignLevel": null,
               "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
-              "show": true
+              "min": null
             },
             {
               "format": "short",
@@ -5941,6 +5940,7 @@
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
           "decimals": 1,
+          "description": "The rate of writing WAL into the persistent storage",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -5990,6 +5990,7 @@
             }
           ],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "etcd disk wal fsync rate",
           "tooltip": {
@@ -6022,7 +6023,11 @@
               "min": null,
               "show": true
             }
-          ]
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         },
         {
           "aliasColors": {},
@@ -6030,6 +6035,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The current term of Raft",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -6074,6 +6080,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Raft term",
           "tooltip": {
@@ -6114,6 +6121,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The last committed index of Raft",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -6124,6 +6132,7 @@
           "id": 93,
           "legend": {
             "alignAsTable": true,
+            "alignLevel": null,
             "avg": false,
             "current": true,
             "hideEmpty": true,
@@ -6131,7 +6140,6 @@
             "max": false,
             "min": false,
             "rightSide": true,
-            "show": true,
             "total": false,
             "values": true
           },
@@ -6158,6 +6166,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Raft committed index",
           "tooltip": {
@@ -6198,6 +6207,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": " \tThe last applied index of Raft",
           "fill": 1,
           "gridPos": {
             "h": 8,
@@ -6242,6 +6252,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Raft applied index",
           "tooltip": {
@@ -6297,6 +6308,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The count of TiDB requests",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -6389,6 +6401,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The time consumed of handling TiDB requests",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -6508,6 +6521,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The heartbeat latency of each TiKV instance in .99",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -6546,7 +6560,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "round(histogram_quantile(0.99, sum(rate(pd_scheduler_region_heartbeat_latency_seconds_bucket[5m])) by (address, store, le)), 1000)",
+              "expr": "round(histogram_quantile(0.99, sum(rate(pd_scheduler_region_heartbeat_latency_seconds_bucket{store=~\"$store\"}[5m])) by (address, store, le)), 1000)",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
@@ -6603,6 +6617,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The count of the corresponding schedule commands which PD sends to each TiKV instance",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -6641,7 +6656,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(pd_scheduler_region_heartbeat{type=\"push\",instance=\"$instance\"}[5m])*60) by (address, store, status)",
+              "expr": "sum(rate(pd_scheduler_region_heartbeat{store=~\"$store\", type=\"push\",instance=\"$instance\"}[5m])*60) by (address, store, status)",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
@@ -6698,6 +6713,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The count of the heartbeats which each TiKV instance reports to PD",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -6736,7 +6752,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_scheduler_region_heartbeat{instance=\"$instance\", type=\"report\", status=\"ok\"}[1m])) by (address, store)",
+              "expr": "sum(delta(pd_scheduler_region_heartbeat{store=~\"$store\", instance=\"$instance\", type=\"report\", status=\"ok\"}[1m])) by (address, store)",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
@@ -6793,6 +6809,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The count of the heartbeats with the ok status",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -6831,7 +6848,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_scheduler_region_heartbeat{instance=\"$instance\", type=\"report\", status=\"bind\"}[1m])) by (address, store)",
+              "expr": "sum(delta(pd_scheduler_region_heartbeat{store=~\"$store\", instance=\"$instance\", type=\"report\", status=\"bind\"}[1m])) by (address, store)",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
@@ -6888,6 +6905,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_TEST-CLUSTER}",
+          "description": "The count of the heartbeats with the error status",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -6926,7 +6944,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(delta(pd_scheduler_region_heartbeat{instance=\"$instance\", type=\"report\", status=\"err\"}[1m])) by (address, store)",
+              "expr": "sum(delta(pd_scheduler_region_heartbeat{store=~\"$store\", instance=\"$instance\", type=\"report\", status=\"err\"}[1m])) by (address, store)",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
@@ -7007,10 +7025,12 @@
           },
           "id": 112,
           "legend": {
+            "alignAsTable": true,
             "avg": false,
             "current": false,
             "max": false,
             "min": false,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": false
@@ -7038,6 +7058,7 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
           "title": "Syncer index",
           "tooltip": {
@@ -7087,10 +7108,12 @@
           },
           "id": 113,
           "legend": {
+            "alignAsTable": true,
             "avg": false,
             "current": false,
             "max": false,
             "min": false,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": false
@@ -7118,8 +7141,9 @@
           ],
           "thresholds": [],
           "timeFrom": null,
+          "timeRegions": [],
           "timeShift": null,
-          "title": "history last index",
+          "title": "History last index",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -7190,14 +7214,14 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_TEST-CLUSTER}",
-        "definition": "",
+        "definition": "label_values(pd_scheduler_store_status, store)",
         "hide": 0,
         "includeAll": true,
-        "label": "Namespace",
-        "multi": false,
-        "name": "namespace",
+        "label": "store",
+        "multi": true,
+        "name": "store",
         "options": [],
-        "query": "label_values(pd_cluster_status{instance=\"$instance\"}, namespace)",
+        "query": "label_values(pd_scheduler_store_status, store)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

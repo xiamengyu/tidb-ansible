@@ -14,6 +14,12 @@
 
 # The playbook of TiDB
 
+- hosts: localhost
+  tasks:
+    - name: confirm operation
+      pause:
+        prompt: "The operation will clear the cluster and the data will be deleted (Ctrl-c C or enter to continue, Ctrl-c A to Abort)"
+
 - import_playbook: stop.yml
 
 - import_playbook: unsafe_cleanup_container.yml
@@ -77,6 +83,15 @@
       with_items:
         - pump-{{ pump_port }}.service
 
+- hosts: tiflash_servers
+  tasks:
+    - name: clean systemd config
+      file: path="/etc/systemd/system/{{ item }}" state=absent
+      become: true
+      when: process_supervision == 'systemd'
+      with_items:
+        - tiflash-{{ tcp_port }}.service
+
 - hosts: tikv_servers
   tasks:
     - name: clean systemd config
@@ -93,6 +108,24 @@
     - name: cleaning up raftdb dir
       file: path={{ raftdb_path }} state=absent
       when: "raftdb_path is defined"
+
+- hosts: tiflash_servers
+  tasks:
+    - name: clean systemd config
+      file: path="/etc/systemd/system/{{ item }}" state=absent
+      become: true
+      when: process_supervision == 'systemd'
+      with_items:
+        - tiflash-{{ tcp_port }}.service
+
+    - name: cleaning up raft dir
+      file: path={{ raft_data_dir }} state=absent
+      when: "raft_data_dir is defined"
+
+    - name: cleaning up data dir
+      file: path={{ item }} state=absent
+      with_items: "{{ data_dir | split_string(',') }}"
+      when: "data_dir is defined"
 
 - hosts: pd_servers
   tasks:
